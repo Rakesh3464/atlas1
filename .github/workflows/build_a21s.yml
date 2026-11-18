@@ -28,23 +28,18 @@ jobs:
           make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 a21s_defconfig
           make -j$(nproc) O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 Image dtbo.img
 
-      - name: Package with AnyKernel3Actions
-        id: ak3
-        uses: MizProject/AnyKernel3Actions@main
-        with:
-          kernel-dir: out/arch/arm64/boot
-          kernel-string: "A21s-5.10-CustomKernel {kernel_version}"
-          do-devicecheck: "1"
-          device-names: "a21s,SM-A217F"
-          block: "/dev/block/by-name/boot"
-          is-slot-device: "0"
-          zip-name: "A21s-5.10-Kernel-{date}.zip"
-          output-dir: dist
-          strict: "true"
+      - name: Package with AnyKernel3
+        run: |
+          git clone https://github.com/osm0sis/AnyKernel3.git anykernel
+          rm -rf anykernel/.git
+          cp out/arch/arm64/boot/Image anykernel/
+          cp out/arch/arm64/boot/dtbo.img anykernel/ || true
+          cd anykernel
+          zip -r ../A21s-5.10-Kernel.zip *
 
       - name: Upload Flashable Zip Artifact
         uses: actions/upload-artifact@v4
         with:
           name: A21s-5.10-Kernel-Zip
-          path: ${{ steps.ak3.outputs.zip-path }}
+          path: A21s-5.10-Kernel.zip
           
