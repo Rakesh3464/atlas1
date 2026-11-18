@@ -25,7 +25,7 @@ jobs:
 
       - name: Compile Kernel & DTBO
         run: |
-          make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 a21s_defconfig
+          make O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 a12s_defconfig
           make -j$(nproc) O=out ARCH=arm64 CC=clang LLVM=1 LLVM_IAS=1 Image dtbo.img
 
       - name: Package with AnyKernel3
